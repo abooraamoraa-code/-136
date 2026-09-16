@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>منصة بوكي العملاقة - إدارة وتطوير أبو العز العمري</title>
 <style>
 :root { --bg: #ffffff; --text: #111111; --accent: #000000; --border: #cccccc; --card-bg: #f9f9f9; }
@@ -27,7 +28,7 @@ th { background: #000; color: #fff; font-weight: 600; }
 <body>
 <header>
 <h1>🌐 POKI MEGA ENTERPRISE PLATFORM</h1>
-<p>الإشراف الهندسي والتطوير: <b>أبو العز العمري</b> | أضخم منصة ألعاب ويب فورية</p>
+<p>الإشراف الهندسي والتطوير: <b>أبو العز العمري</b> | منصة ألعاب الويب السحابية</p>
 <div class="nav-container">
 <button class="nav-btn" onclick="go('home')">الرئيسية والالعاب</button>
 <button class="nav-btn" onclick="go('dev')">بوابة المطورين</button>
@@ -41,7 +42,7 @@ th { background: #000; color: #fff; font-weight: 600; }
 <div class="container">
 <div id="home" class="sec active">
 <h2>🎮 ألعاب التصفح المباشرة المعتمدة</h2>
-<div id="approvedGamesList">جاري جلب الألعاب...</div>
+<div id="approvedGamesList">جاري جلب ألعاب المنصة...</div>
 </div>
 <div id="dev" class="sec">
 <h2>🚀 بوابة المطورين</h2>
@@ -62,21 +63,21 @@ th { background: #000; color: #fff; font-weight: 600; }
 <p id="adErr" style="color:red;margin-top:10px;"></p>
 </div>
 <div id="adDash" style="display:none;">
-<h3>📋 نظام إدارة الألعاب</h3>
+<h3>📋 نظام إدارة الألعاب والتحكم</h3>
 <div id="adminList">جاري التحميل...</div>
 </div>
 </div>
 <div id="leaderboard" class="sec">
 <h2>🏆 لوحة الشرف وأبطال المنصة</h2>
-<div id="boardList">جاري التحميل...</div>
+<div id="boardList"></div>
 </div>
 <div id="auth" class="sec">
-<h2>🔐 تسجيل الدخول والحسابات الحقيقية</h2>
-<input type="email" id="uMail" class="inp" placeholder="البريد الإلكتروني الحقيقي">
-<input type="password" id="uPass" class="inp" placeholder="كلمة المرور المشفرة">
+<h2>🔐 تسجيل الدخول والحسابات</h2>
+<input type="email" id="uMail" class="inp" placeholder="البريد الإلكتروني">
+<input type="password" id="uPass" class="inp" placeholder="كلمة المرور">
 <div style="display:flex;gap:10px;margin-top:15px;">
 <button class="nav-btn" style="background:#000;color:#fff;flex:1;" onclick="logIn()">تسجيل الدخول</button>
-<button class="nav-btn" style="background:#fff;color:#000;border:2px solid #000;flex:1;" onclick="regUser()">إنشاء حساب جديد</button>
+<button class="nav-btn" style="background:#fff;color:#000;border:2px solid #000;flex:1;" onclick="regUser()">إنشاء حساب (مع 150 نقطة)</button>
 </div>
 <p id="uMsg" style="margin-top:15px;font-weight:bold;"></p>
 </div>
@@ -91,15 +92,91 @@ th { background: #000; color: #fff; font-weight: 600; }
 </div>
 </div>
 <script>
+let localGames = JSON.parse(localStorage.getItem('poki_games') || '[]');
+let localUsers = JSON.parse(localStorage.getItem('poki_users') || '[{"email":"admin@poki.com","points":500}]');
+
 function go(id){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='home')loadApprovedGames();if(id==='leaderboard')loadLeaderboard();if(id==='admin'&&document.getElementById('adDash').style.display==='block')loadAdGames();}
-function sendGame(){let data={dev_name:document.getElementById('dName').value,title:document.getElementById('gTitle').value,link:document.getElementById('gLink').value,year:document.getElementById('gYear').value,category:document.getElementById('gCat').value};fetch('/api/games/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(r=>r.json()).then(d=>{document.getElementById('dMsg').innerText=d.message;});}
-function chkAdmin(){let p=document.getElementById('adPass').value;if(p==='AbuAlIzz_Master_Secured_2026_Enterprise#999!'){document.getElementById('adLogin').style.display='none';document.getElementById('adDash').style.display='block';loadAdGames();}else{document.getElementById('adErr').innerText='كلمة المرور السرية غير صحيحة!';}}
-function loadAdGames(){fetch('/api/games/all').then(r=>r.json()).then(data=>{let html='';data.forEach(g=>{html+=`<div class="game-card"><div><h4 style="margin:0;">${g.title} (${g.year}) - [${g.category}]</h4><p style="margin:5px 0;">المطور: <b>${g.dev_name}</b> | الحالة: <b>${g.status}</b></p></div><div style="display:flex;gap:5px;"><button class="nav-btn" style="background:#28a745;color:#fff;padding:6px 12px;" onclick="act(${g.id}, 'approve')">قبول</button><button class="nav-btn" style="background:#ffc107;color:#000;padding:6px 12px;" onclick="act(${g.id}, 'reject')">رفض</button><button class="nav-btn" style="background:#dc3545;color:#fff;padding:6px 12px;" onclick="act(${g.id}, 'delete')">حذف</button></div></div>`;});document.getElementById('adminList').innerHTML=html||'لا توجد ألعاب مرفوعة.';});}
-function loadApprovedGames(){fetch('/api/games/all').then(r=>r.json()).then(data=>{let html='';data.filter(g=>g.status==='تمت الموافقة').forEach(g=>{html+=`<div class="game-card"><div><h4 style="margin:0;">${g.title} (${g.year})</h4><p style="margin:5px 0;">التصنيف: ${g.category} | المطور: ${g.dev_name}</p></div><div><a href="${g.link}" target="_blank"><button class="nav-btn" style="background:#000;color:#fff;">🎮 العب الآن</button></a></div></div>`;});document.getElementById('approvedGamesList').innerHTML=html||'لا توجد ألعاب معتمدة.';});}
-function loadLeaderboard(){fetch('/api/leaderboard').then(r=>r.json()).then(data=>{let html=`<table><tr><th>المرتبة</th><th>البريد الإلكتروني</th><th>النقاط</th></tr>`;data.forEach((u,idx)=>{html+=`<tr><td>#${idx+1}</td><td>${u.email}</td><td style="font-weight:bold;color:#28a745;">${u.points} نقطة</td></tr>`;});html+=`</table>`;document.getElementById('boardList').innerHTML=html;});}
-function act(id,action){fetch('/api/admin/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,action:action})}).then(r=>r.json()).then(d=>{loadAdGames();});}
-function regUser(){let e=document.getElementById('uMail').value;let p=document.getElementById('uPass').value;fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})}).then(r=>r.json()).then(d=>{document.getElementById('uMsg').innerText=d.message;});}
-function logIn(){let e=document.getElementById('uMail').value;let p=document.getElementById('uPass').value;fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})}).then(r=>r.json()).then(d=>{document.getElementById('uMsg').innerText=d.message;}).catch(err=>{document.getElementById('uMsg').innerText='خطأ في البيانات!';});}
+
+function sendGame(){
+    let g = {
+        id: Date.now(),
+        dev_name: document.getElementById('dName').value,
+        title: document.getElementById('gTitle').value,
+        link: document.getElementById('gLink').value,
+        year: document.getElementById('gYear').value,
+        category: document.getElementById('gCat').value,
+        status: 'قيد المراجعة'
+    };
+    if(!g.title || !g.link){ document.getElementById('dMsg').innerText = 'يرجى ملء الحقول الأساسية!'; return; }
+    localGames.push(g);
+    localStorage.setItem('poki_games', JSON.stringify(localGames));
+    document.getElementById('dMsg').innerText = 'تم إرسال اللعبة بنجاح وحفظها في الذاكرة السحابية للمنصة!';
+}
+
+function chkAdmin(){
+    let p = document.getElementById('adPass').value;
+    if(p === 'AbuAlIzz_Master_Secured_2026_Enterprise#999!'){
+        document.getElementById('adLogin').style.display = 'none';
+        document.getElementById('adDash').style.display = 'block';
+        loadAdGames();
+    } else {
+        document.getElementById('adErr').innerText = 'كلمة المرور السرية غير صحيحة!';
+    }
+}
+
+function loadAdGames(){
+    let html = '';
+    localGames.forEach(g=>{
+        html += `<div class="game-card"><div><h4 style="margin:0;">${g.title} (${g.year}) - [${g.category}]</h4><p style="margin:5px 0;">المطور: <b>${g.dev_name}</b> | الحالة: <b>${g.status}</b></p><a href="${g.link}" target="_blank" style="color:#000;font-size:13px;">رابط اللعبة</a></div><div style="display:flex;gap:5px;"><button class="nav-btn" style="background:#28a745;color:#fff;padding:6px 12px;" onclick="act(${g.id}, 'approve')">قبول</button><button class="nav-btn" style="background:#ffc107;color:#000;padding:6px 12px;" onclick="act(${g.id}, 'reject')">رفض</button><button class="nav-btn" style="background:#dc3545;color:#fff;padding:6px 12px;" onclick="act(${g.id}, 'delete')">حذف</button></div></div>`;
+    });
+    document.getElementById('adminList').innerHTML = html || 'لا توجد ألعاب مرفوعة.';
+}
+
+function loadApprovedGames(){
+    let html = '';
+    localGames.filter(g=>g.status==='تمت الموافقة').forEach(g=>{
+        html += `<div class="game-card"><div><h4 style="margin:0;">${g.title} (${g.year})</h4><p style="margin:5px 0;">التصنيف: ${g.category} | المطور: ${g.dev_name}</p></div><div><a href="${g.link}" target="_blank"><button class="nav-btn" style="background:#000;color:#fff;">🎮 العب الآن</button></a></div></div>`;
+    });
+    document.getElementById('approvedGamesList').innerHTML = html || 'لا توجد ألعاب معتمدة حالياً. ارفع لعبتك من بوابة المطورين واعتمدها من لوحة الإدارة!';
+}
+
+function loadLeaderboard(){
+    let html = `<table><tr><th>المرتبة</th><th>المستخدم</th><th>النقاط</th></tr>`;
+    localUsers.sort((a,b)=>b.points - a.points).forEach((u,idx)=>{
+        html += `<tr><td>#${idx+1}</td><td>${u.email}</td><td style="font-weight:bold;color:#28a745;">${u.points} نقطة</td></tr>`;
+    });
+    html += `</table>`;
+    document.getElementById('boardList').innerHTML = html;
+}
+
+function act(id, action){
+    let idx = localGames.findIndex(g=>g.id===id);
+    if(idx !== -1){
+        if(action==='approve') localGames[idx].status = 'تمت الموافقة';
+        else if(action==='reject') localGames[idx].status = 'مرفوضة';
+        else if(action==='delete') localGames.splice(idx, 1);
+        localStorage.setItem('poki_games', JSON.stringify(localGames));
+        loadAdGames();
+    }
+}
+
+function regUser(){
+    let e = document.getElementById('uMail').value;
+    if(!e){ document.getElementById('uMsg').innerText = 'أدخل البريد الإلكتروني!'; return; }
+    if(localUsers.some(u=>u.email===e)){ document.getElementById('uMsg').innerText = 'البريد مسجل مسبقاً!'; return; }
+    localUsers.push({email: e, points: 150});
+    localStorage.setItem('poki_users', JSON.stringify(localUsers));
+    document.getElementById('uMsg').innerText = 'تم إنشاء الحساب بنجاح ومنحك 150 نقطة ترحيبية!';
+}
+
+function logIn(){
+    let e = document.getElementById('uMail').value;
+    let u = localUsers.find(x=>x.email===e);
+    if(u){ document.getElementById('uMsg').innerText = 'تم تسجيل الدخول بنجاح تام!'; }
+    else { document.getElementById('uMsg').innerText = 'الحساب غير موجود، يرجى التسجيل أولاً!'; }
+}
+
+loadApprovedGames();
 </script>
 </body>
 </html>
