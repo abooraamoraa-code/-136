@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>منصة بوكي العملاقة - إدارة وتطوير أبو العز العمري</title>
+<style>
+:root { --bg: #ffffff; --text: #111111; --accent: #000000; --border: #cccccc; --card-bg: #f9f9f9; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; line-height: 1.6; }
+header { background: #ffffff; border-bottom: 3px solid var(--accent); padding: 30px 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+h1 { margin: 0; font-size: 32px; color: #000; font-weight: 900; }
+p { color: #555; font-size: 15px; }
+.nav-container { margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+.nav-btn { background: #fff; border: 2px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; font-size: 14px; }
+.nav-btn:hover { background: var(--accent); color: #fff; transform: translateY(-2px); }
+.container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+.sec { display: none; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+.active { display: block; }
+.inp { width: 100%; padding: 14px; margin: 12px 0; background: #fff; border: 2px solid var(--border); color: #111; border-radius: 10px; box-sizing: border-box; font-size: 15px; }
+.inp:focus { border-color: var(--accent); outline: none; }
+.game-card { background: #fff; border: 1px solid var(--border); padding: 20px; margin: 15px 0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+th, td { padding: 14px; text-align: right; border-bottom: 1px solid var(--border); }
+th { background: #000; color: #fff; font-weight: 600; }
+.fb-btn { background: #1877f2; color: #fff; border: none; padding: 15px 30px; font-size: 16px; border-radius: 10px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+</style>
+</head>
+<body>
+<header>
+<h1>🌐 POKI MEGA ENTERPRISE PLATFORM</h1>
+<p>الإشراف الهندسي والتطوير: <b>أبو العز العمري</b> | أضخم منصة ألعاب ويب فورية</p>
+<div class="nav-container">
+<button class="nav-btn" onclick="go('home')">الرئيسية والالعاب</button>
+<button class="nav-btn" onclick="go('dev')">بوابة المطورين</button>
+<button class="nav-btn" onclick="go('admin')">لوحة الإدارة المشفرة</button>
+<button class="nav-btn" onclick="go('leaderboard')">لوحة الشرف</button>
+<button class="nav-btn" onclick="go('auth')">تسجيل الدخول</button>
+<button class="nav-btn" onclick="go('about')">من نحن</button>
+<button class="nav-btn" onclick="go('contact')">اتصل بنا</button>
+</div>
+</header>
+<div class="container">
+<div id="home" class="sec active">
+<h2>🎮 ألعاب التصفح المباشرة المعتمدة</h2>
+<div id="approvedGamesList">جاري جلب الألعاب...</div>
+</div>
+<div id="dev" class="sec">
+<h2>🚀 بوابة المطورين</h2>
+<input type="text" id="dName" class="inp" placeholder="اسم المطور">
+<input type="text" id="gTitle" class="inp" placeholder="اسم اللعبة">
+<input type="text" id="gLink" class="inp" placeholder="رابط اللعبة (URL)">
+<input type="text" id="gYear" class="inp" placeholder="سنة الإطلاق">
+<input type="text" id="gCat" class="inp" placeholder="التصنيف">
+<button class="nav-btn" style="background:#000;color:#fff;width:100%;padding:14px;" onclick="sendGame()">إرسال اللعبة للمراجعة</button>
+<p id="dMsg" style="margin-top:15px;font-weight:bold;"></p>
+</div>
+<div id="admin" class="sec">
+<h2>🔐 لوحة الإدارة والاشراف السرية</h2>
+<div id="adLogin">
+<p>أدخل كلمة المرور السرية للمدير العام:</p>
+<input type="password" id="adPass" class="inp" placeholder="كلمة المرور المشفرة">
+<button class="nav-btn" style="background:#000;color:#fff;" onclick="chkAdmin()">فك قفل لوحة التحكم</button>
+<p id="adErr" style="color:red;margin-top:10px;"></p>
+</div>
+<div id="adDash" style="display:none;">
+<h3>📋 نظام إدارة الألعاب</h3>
+<div id="adminList">جاري التحميل...</div>
+</div>
+</div>
+<div id="leaderboard" class="sec">
+<h2>🏆 لوحة الشرف وأبطال المنصة</h2>
+<div id="boardList">جاري التحميل...</div>
+</div>
+<div id="auth" class="sec">
+<h2>🔐 تسجيل الدخول والحسابات الحقيقية</h2>
+<input type="email" id="uMail" class="inp" placeholder="البريد الإلكتروني الحقيقي">
+<input type="password" id="uPass" class="inp" placeholder="كلمة المرور المشفرة">
+<div style="display:flex;gap:10px;margin-top:15px;">
+<button class="nav-btn" style="background:#000;color:#fff;flex:1;" onclick="logIn()">تسجيل الدخول</button>
+<button class="nav-btn" style="background:#fff;color:#000;border:2px solid #000;flex:1;" onclick="regUser()">إنشاء حساب جديد</button>
+</div>
+<p id="uMsg" style="margin-top:15px;font-weight:bold;"></p>
+</div>
+<div id="about" class="sec">
+<h2>📖 من نحن</h2>
+<p>منصة بوكي العملاقة تم تأسيسها وهندستها بالكامل تحت الإشراف المباشر للمهندس والمبرمج <strong>أبو العز العمري</strong>.</p>
+</div>
+<div id="contact" class="sec" style="text-align:center;">
+<h2>💬 اتصل بنا</h2>
+<p>تواصل مع المؤسس <strong>أبو العز العمري</strong> عبر صفحته الرسمية على الفيسبوك:</p>
+<div style="margin-top:30px;"><a href="https://facebook.com" target="_blank" class="fb-btn">🔗 التواصل مع أبو العز العمري عبر فيسبوك</a></div>
+</div>
+</div>
+<script>
+function go(id){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='home')loadApprovedGames();if(id==='leaderboard')loadLeaderboard();if(id==='admin'&&document.getElementById('adDash').style.display==='block')loadAdGames();}
+function sendGame(){let data={dev_name:document.getElementById('dName').value,title:document.getElementById('gTitle').value,link:document.getElementById('gLink').value,year:document.getElementById('gYear').value,category:document.getElementById('gCat').value};fetch('/api/games/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(r=>r.json()).then(d=>{document.getElementById('dMsg').innerText=d.message;});}
+function chkAdmin(){let p=document.getElementById('adPass').value;if(p==='AbuAlIzz_Master_Secured_2026_Enterprise#999!'){document.getElementById('adLogin').style.display='none';document.getElementById('adDash').style.display='block';loadAdGames();}else{document.getElementById('adErr').innerText='كلمة المرور السرية غير صحيحة!';}}
+function loadAdGames(){fetch('/api/games/all').then(r=>r.json()).then(data=>{let html='';data.forEach(g=>{html+=`<div class="game-card"><div><h4 style="margin:0;">${g.title} (${g.year}) - [${g.category}]</h4><p style="margin:5px 0;">المطور: <b>${g.dev_name}</b> | الحالة: <b>${g.status}</b></p></div><div style="display:flex;gap:5px;"><button class="nav-btn" style="background:#28a745;color:#fff;padding:6px 12px;" onclick="act(${g.id}, 'approve')">قبول</button><button class="nav-btn" style="background:#ffc107;color:#000;padding:6px 12px;" onclick="act(${g.id}, 'reject')">رفض</button><button class="nav-btn" style="background:#dc3545;color:#fff;padding:6px 12px;" onclick="act(${g.id}, 'delete')">حذف</button></div></div>`;});document.getElementById('adminList').innerHTML=html||'لا توجد ألعاب مرفوعة.';});}
+function loadApprovedGames(){fetch('/api/games/all').then(r=>r.json()).then(data=>{let html='';data.filter(g=>g.status==='تمت الموافقة').forEach(g=>{html+=`<div class="game-card"><div><h4 style="margin:0;">${g.title} (${g.year})</h4><p style="margin:5px 0;">التصنيف: ${g.category} | المطور: ${g.dev_name}</p></div><div><a href="${g.link}" target="_blank"><button class="nav-btn" style="background:#000;color:#fff;">🎮 العب الآن</button></a></div></div>`;});document.getElementById('approvedGamesList').innerHTML=html||'لا توجد ألعاب معتمدة.';});}
+function loadLeaderboard(){fetch('/api/leaderboard').then(r=>r.json()).then(data=>{let html=`<table><tr><th>المرتبة</th><th>البريد الإلكتروني</th><th>النقاط</th></tr>`;data.forEach((u,idx)=>{html+=`<tr><td>#${idx+1}</td><td>${u.email}</td><td style="font-weight:bold;color:#28a745;">${u.points} نقطة</td></tr>`;});html+=`</table>`;document.getElementById('boardList').innerHTML=html;});}
+function act(id,action){fetch('/api/admin/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,action:action})}).then(r=>r.json()).then(d=>{loadAdGames();});}
+function regUser(){let e=document.getElementById('uMail').value;let p=document.getElementById('uPass').value;fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})}).then(r=>r.json()).then(d=>{document.getElementById('uMsg').innerText=d.message;});}
+function logIn(){let e=document.getElementById('uMail').value;let p=document.getElementById('uPass').value;fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})}).then(r=>r.json()).then(d=>{document.getElementById('uMsg').innerText=d.message;}).catch(err=>{document.getElementById('uMsg').innerText='خطأ في البيانات!';});}
+</script>
+</body>
+</html>
